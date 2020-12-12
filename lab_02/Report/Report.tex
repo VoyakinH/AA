@@ -150,15 +150,25 @@ $c_{i,j} = \sum\limits_{r=1}^n a_{i,r}\cdot b_{r,j}$ называется про
 
 
 \section{Алгоритм Винограда}
-Рассмотрим два вектора $V = (v1, v2, v3, v4)$ и $W = (w1, w2, w3, w4)$. Их скалярное произведение равно: 
 
-$ V \cdot W=v_1 \cdot w_1 + v_2 \cdot w_2 + v_3 \cdot w_3 + v_4 \cdot w_4$ \\
+Рассмотрим два вектора $V = (v1, v2, v3, v4)$ и $W = (w1, w2, w3, w4)$.  
 
-Это равенство можно переписать в виде: \\
-$V \cdot W=(v_1 + w_2) \cdot (v_2 + w_1) + (v_3 + w_4) \cdot (v_4 + w_3) - v_1 \cdot v_2 - v_3 \cdot v_4 - w_1 \cdot w_2 - w_3 \cdot w_4$\\
+Их скалярное произведение равно (\ref{formula}) 
+
+\begin{equation} \label{formula}
+	V \cdot W=v_1 \cdot w_1 + v_2 \cdot w_2 + v_3 \cdot w_3 + v_4 \cdot w_4
+\end{equation}
+
+Равенство (\ref{formula}) можно переписать в виде (\ref{formula2}) 
+\begin{equation} \label{formula2}
+	V \cdot W=(v_1 + w_2) \cdot (v_2 + w_1) + (v_3 + w_4) \cdot (v_4 + w_3) - v_1 \cdot v_2 - v_3 \cdot v_4 - w_1 \cdot w_2 - w_3 \cdot w_4
+\end{equation}
 
 Менее очевидно, что выражение в правой части последнего равенства допускает предварительную обработку: его части можно вычислить заранее и запомнить для каждой строки первой матрицы и для каждого столбца второй. 
+
 Это означает, что над предварительно обработанными элементами нам придется выполнять лишь первые два умножения и последующие пять сложений, а также дополнительно два сложения. Подробое описание алгоритма Винограда можно найти в [2].
+
+В четвёртой части алгоритма, при нечётных длинах перемножаемых векторов необходимо выполнять корректирование матриц.
 
 \section{Вывод}
 Были рассмотрены алгоритмы классического умножения матриц и алгоритм Винограда, основная отличительная черта которого — наличие предварительной обработки, а также уменьшение количества операций умножения.
@@ -182,14 +192,14 @@ $V \cdot W=(v_1 + w_2) \cdot (v_2 + w_1) + (v_3 + w_4) \cdot (v_4 + w_3) - v_1 \
 
 \begin{figure}[pt]
 \centering
-\includegraphics[scale=0.6]{alg1.jpg}
+\includegraphics[scale=1]{alg1.png}
 \caption{Схема классического алгоритма умножения матриц}
 \label{fig:mpr}
 \end{figure}
 
 \begin{figure}[pt]
 \centering
-\includegraphics[scale=0.6]{alg2.jpg}
+\includegraphics[scale=1]{alg2.png}
 \caption{Схема алгоритма Винограда}
 \label{fig:mpr}
 \end{figure}
@@ -197,7 +207,7 @@ $V \cdot W=(v_1 + w_2) \cdot (v_2 + w_1) + (v_3 + w_4) \cdot (v_4 + w_3) - v_1 \
 
 \begin{figure}[pt]
 \centering
-\includegraphics[scale=0.6]{alg3.jpg}
+\includegraphics[scale=1]{alg3.png}
 \caption{Схема оптимизированного алгоритма Винограда}
 \label{fig:mpr}
 \end{figure}
@@ -296,8 +306,8 @@ def standard_alg(mt_1, mt_2):
 	res = [[0 for _ in range(len(mt_2[0]))] for _ in range(len(mt_1))]
 	for i in range(len(mt_1)):
 		for j in range(len(mt_2[0])):
-		for k in range(len(mt_1[0])):
-			res[i][j] += mt_1[i][k] * mt_2[k][j]
+			for k in range(len(mt_1[0])):
+				res[i][j] += mt_1[i][k] * mt_2[k][j]
 	return res
 \end{lstlisting}
 
@@ -388,6 +398,7 @@ def Winograd_alg_improved(mt_1, mt_2):
 \section{Сравнительный анализ на основе замеров времени работы алгоритмов}
 
 Был проведен замер времени работы каждого из алгоритмов.\\
+Каждый замер времени производился 10 раз и результат усреднялся.\\
 Первый эксперимент производится для лучшего случая на матрицах с размерами от 100 x 100 до 500 x 500 c шагом 100. \\
 
 
