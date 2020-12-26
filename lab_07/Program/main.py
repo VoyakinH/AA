@@ -3,10 +3,10 @@ from random import *
 
 def generate(count):
     dictionary = []
-    type_pay = ["Материнский капитал", "Личные средства(наличкой)", "Личные средства(банковский счет)","Гос. бюджет", "За счет организации"]
+    type_contract = ["Двусторонний", "Многосторонний", "Договор подряда","Договор возмездного оказания услсуг", "Купли-продажи","Аренды"]
     for i in range(count):
         record = {'number': i + 1,
-                'type': choice(type_pay)}
+                'type': choice(type_contract)}
         dictionary.append(record)
     return dictionary
 
@@ -59,7 +59,7 @@ if __name__ == '__main__':
 
     print(dictionary)
 
-    number = int(input("Введите номер счета: "))
+    number = int(input("Введите номер договора: "))
     print("Результат")
     print("Поиск полным перебором:")
     print(brute(dictionary, number))
