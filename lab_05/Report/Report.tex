@@ -1,0 +1,443 @@
+\documentclass[12pt, a4paper]{report}
+\usepackage[utf8]{inputenc}
+\usepackage[english, russian]{babel}
+
+\usepackage{graphicx}
+\usepackage{listings}
+\usepackage{color}
+
+\usepackage{amsmath}
+\usepackage{pgfplots}
+\usepackage{url}
+\usepackage{flowchart}
+\usepackage{tikz}
+\DeclareGraphicsExtensions{.pdf,.png,.jpg,.svg}
+\usetikzlibrary{shapes, arrows}
+
+\usepackage{pgfplotstable}
+
+\renewcommand\contentsname{Содержание}
+
+\usepackage{geometry}
+\geometry{left=3cm}
+\geometry{right=1cm}
+\geometry{top=2cm}
+\geometry{bottom=2cm}
+
+\lstset{ %
+language=C++,                 % выбор языка для подсветки (здесь это С)
+basicstyle=\small\sffamily, % размер и начертание шрифта для подсветки кода
+numbers=left,               % где поставить нумерацию строк (слева\справа)
+numberstyle=\tiny,           % размер шрифта для номеров строк
+stepnumber=1,                   % размер шага между двумя номерами строк
+numbersep=-5pt,                % как далеко отстоят номера строк от         подсвечиваемого кода
+backgroundcolor=\color{white}, % цвет фона подсветки - используем         \usepackage{color}
+showspaces=false,            % показывать или нет пробелы специальными     отступами
+showstringspaces=false,      % показывать или нет пробелы в строках
+showtabs=false,             % показывать или нет табуляцию в строках
+frame=single,              % рисовать рамку вокруг кода
+tabsize=2,                 % размер табуляции по умолчанию равен 2 пробелам
+captionpos=t,              % позиция заголовка вверху [t] или внизу [b] 
+breaklines=true,           % автоматически переносить строки (да\нет)
+breakatwhitespace=false, % переносить строки только если есть пробел
+escapeinside={\%*}{*)},   % если нужно добавить комментарии в коде
+keywordstyle=\color{blue}\ttfamily,
+stringstyle=\color{red}\ttfamily,
+commentstyle=\color{green}\ttfamily,
+morecomment=[l][\color{magenta}]{\#},
+columns=fullflexible }
+
+\usepackage{titlesec}
+\titleformat{\chapter}[hang]{\LARGE\bfseries}{\thechapter{.} }{0pt}{\LARGE\bfseries}
+\titleformat*{\section}{\Large\bfseries}
+\titleformat*{\subsection}{\large\bfseries}
+
+\begin{document}
+	
+	\begin{titlepage}
+		\newgeometry{pdftex, left=2cm, right=2cm, top=2.5cm, bottom=2.5cm}
+		\fontsize{12pt}{12pt}\selectfont
+		\noindent \begin{minipage}{0.15\textwidth}
+			\includegraphics[width=\linewidth]{b_logo.jpg}
+		\end{minipage}
+		\noindent\begin{minipage}{0.9\textwidth}\centering
+			\textbf{Министерство науки и высшего образования Российской Федерации}\\
+			\textbf{Федеральное государственное бюджетное образовательное учреждение высшего образования}\\
+			\textbf{«Московский государственный технический университет имени Н.Э.~Баумана}\\
+			\textbf{(национальный исследовательский университет)»}\\
+			\textbf{(МГТУ им. Н.Э.~Баумана)}
+		\end{minipage}
+		
+		\noindent\rule{18cm}{3pt}
+		\newline\newline
+		\noindent ФАКУЛЬТЕТ $\underline{\text{«Информатика и системы управления»}}$ \newline\newline
+		\noindent КАФЕДРА $\underline{\text{«Программное обеспечение ЭВМ и информационные технологии»}}$\newline\newline\newline\newline\newline\newline\newline
+		
+		
+		\begin{center}
+			\Large\textbf{Лабораторная работа №5}\newline
+			\Large\textbf{по курсу "Анализ алгоритмов"}\newline
+		\end{center}
+	
+		\noindent\textbf{Тема} $\underline{\text{~~~~~Конвейерная обработка~~}}$\newline\newline\newline
+		\noindent\textbf{Студент} $\underline{\text{~~~~~Воякин А. Я.~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~}}$\newline\newline
+		\noindent\textbf{Группа} $\underline{\text{~~~~~ИУ7-54Б~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~}}$\newline\newline
+		\noindent\textbf{Оценка (баллы)} $\underline{\text{~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~}}$\newline\newline
+		\noindent\textbf{Преподаватели} $\underline{\text{~~~~~Волкова Л.Л., Строганов Ю.В.~~~~~~~~~~~~~~~}}$\newline
+		
+		\begin{center}
+			\vfill
+			Москва~---~\the\year
+			~г.
+		\end{center}
+	\restoregeometry
+	\end{titlepage}
+	
+	\tableofcontents
+
+	\chapter*{Введение}
+	\addcontentsline{toc}{chapter}{Введение}
+	\hspace{0.5cm}Сам термин «конвейер» пришёл из промышленности, где используется аналогичный принцип работы — материал автоматически подтягивается по ленте конвейера к рабочему, который осуществляет с ним необходимые действия, следующий за ним рабочий выполняет свои функции над получившейся заготовкой, следующий делает еще что-то, таким образом, к концу конвейера цепочка рабочих полностью выполняет все поставленные задачи, не срывая, однако, темпов производства. Например, если на самую медлительную операцию затрачивается одна минута, то каждая деталь будет сходить с конвейера через одну минуту.
+	
+	Идея заключается в разделении обработки компьютерной инструкции на последовательность независимых стадий с сохранением результатов в конце каждой стадии. Это позволяет управляющим цепям процессора получать инструкции со скоростью самой медленной стадии обработки, однако при этом намного быстрее, чем при выполнении эксклюзивной полной обработки каждой инструкции от начала до конца.
+
+    \chapter{Аналитический раздел}
+   	\vspace{-0.5cm}В данном разделе будет описан принцип конвейерной обработки.
+   	\section{Цель и задачи}
+   	\hspace{0.5cm}Цель лабораторной работы: изучений конвейрной обработки.
+   	Для достижения этой цели были поставлены следующие задачи:
+   	\begin{enumerate}
+   		\item разработка и реализация алгоритмов
+   		\item исследование работы конвейерной обработки с использование многопоточности и без
+   		\item описание и обоснование полученных результатов
+   	\end{enumerate}
+   
+	\section{Конвейерная обработка данных}
+	\hspace{0.5cm}Если задача заключается в применении одной последовательности операций ко многим независимым элементам данных, то можно организовать
+	распараллеленный конвейер. Здесь можно провести аналогию с физическим
+	конвейером: данные поступают с одного конца, подвергаются ряду операций и выходят с другого конца.
+	Для того, чтобы распределить работу по принципу конвейерной обработки данных, следует создать отдельный поток для каждого участка конвейера, то есть для каждой операции. По завершении операции элемент
+	данных помещается в очередь, откуда его забирает следующий поток. В
+	результате поток, выполняющий первую операцию, сможет приступить к
+	обработке следующего элемента, пока второй поток трудится над первым
+	элементом. Конвейеры хороши также тогда, когда каждая операция занимает много времени; распределяя между потоками задачи, а не данные, мы
+	изменяем качественные показатели производительности ~\cite{devcpp}.
+
+	\section{Вывод}
+	\hspace{0.5cm}В данном разделе был описан принцип конвейерной обработки.
+	
+	\chapter{Технологический раздел}
+	\hspace{0.5cm}В данном разделе будет предъявлены требования к разрабатываемому программному обеспечению, средства, использованные в процессе разработки для реализации поставленных задач, а также представлен листинг кода рпограммы. 
+	
+	\section{Требования к программному обеспечению}
+	\hspace{0.5cm}Программное обеспечение должно реализовывать линейную, конвейерную обработку данных. Пользователь должен иметь возможность вводить количество объектов, которые будут обрабатываться.
+	\section{Средства реализации}
+	\hspace{0.5cm}Для реализации программы был использован язык C++ ~\cite{CPP}. Для замера процессорного времени была использована функция rdtsc() из библиотеки stdrin.h.
+	
+	
+	\section{Листинг кода}
+	\hspace{0.5cm} В листинге \ref{code:conv} описан класс конвейера. В листинге \ref{code:lin} представлена реализация линейной и конвейерной обработки матриц, а в листинге \ref{code:par} - параллельной.
+	
+	\begin{lstlisting}[label=code:conv,caption=Класс конвейера]
+	class Conveyor
+	{
+	private:
+		size_t obj_count;
+		size_t queue_count;
+		size_t averege_time;
+		const size_t delay_time = 3;
+		std::vector<int> time_stay_at_queue[4];
+	
+	public:
+		Conveyor(size_t _objs, size_t _queues, size_t msec) :
+		obj_count(_objs), queue_count(_queues), averege_time(msec) {}
+		
+		void execute_linear();
+		void execute_parallel();
+	
+	private:
+		size_t get_time();
+		
+		void log_print_obj_queue(MatrixSet& obj, size_t qu);
+		void log_print_start(MatrixSet& obj, size_t qu, size_t time);
+		void log_print_end(MatrixSet& obj, size_t qu, size_t time);
+		void log_print_time(MatrixSet& obj, size_t qu, size_t time);
+		
+		void do_linear_work1(MatrixSet& obj, size_t queue, bool log=true);
+		void do_linear_work2(MatrixSet& obj, size_t queue, bool log=true);
+		void do_linear_work3(MatrixSet& obj, size_t queue, bool log=true);
+		
+		void* do_parallel_work1(void *_args);
+		void* do_parallel_work2(void *_args);
+		void* do_parallel_work3(void *_args);
+	};
+	\end{lstlisting}
+
+	\begin{lstlisting}[label=code:lin,caption=Реализация линейной обработки матрицы]
+	void Conveyor::do_linear_work1(MatrixSet& obj, size_t queue, bool log)
+	{
+		size_t start = get_time();
+		if (log)
+		log_print_start(obj, queue, start);
+		obj.sum(0, obj.size / 3);
+		size_t end = get_time();
+		if (log)
+		{
+			log_print_end(obj, queue, end);
+			log_print_time(obj, queue, end - start);
+		}
+	}
+	
+	void Conveyor::do_linear_work2(MatrixSet& obj, size_t queue, bool log)
+	{
+		size_t start = get_time();
+		if (log)
+		log_print_start(obj, queue, start);
+		obj.sum(obj.size / 3, 2 * obj.size / 3);
+		size_t end = get_time();
+		if (log)
+		{
+			log_print_end(obj, queue, end);
+			log_print_time(obj, queue, end - start);
+		}
+	}
+	
+	void Conveyor::do_linear_work3(MatrixSet& obj, size_t queue, bool log)
+	{
+		size_t start = get_time();
+		if (log)
+		log_print_start(obj, queue, start);
+		obj.sum(2 * obj.size / 3, obj.size);
+		size_t end = get_time();
+		if (log)
+		{
+			log_print_end(obj, queue, end);
+			log_print_time(obj, queue, end - start);
+		}
+	}
+	
+	void Conveyor::execute_linear()
+	{
+		
+		std::queue<MatrixSet> obj_generator;
+		
+		for (size_t i = 0; i < obj_count; i++)
+		obj_generator.push(MatrixSet(i + 1, 1038, -200, 200));
+		
+		std::vector<MatrixSet> obj_pools;
+		
+		while (obj_pools.size() != obj_count)
+		{
+			MatrixSet obj = obj_generator.front();
+			obj_generator.pop();
+			
+			for (size_t i = 0; i < queue_count; i++)
+			{
+				if (i == 0)
+					do_linear_work1(obj, i);
+				else if (i == 1)
+					do_linear_work2(obj, i);
+				else if (i >= 2)
+					do_linear_work3(obj, i);
+			}
+		
+			obj_pools.push_back(obj);
+		}
+	}
+	\end{lstlisting}
+	
+	\begin{lstlisting}[label=code:par,caption=Реализация параллельной обработки матрицы]
+	void* Conveyor::do_parallel_work1(void *_args)
+	{
+		par_args *args = (par_args*) _args;
+		size_t start = get_time();
+		args->obj.sum(0, args->obj.size / 3);
+		
+		args->mutex.lock();
+		args->queue.push(args->obj);
+		args->mutex.unlock();
+		
+		size_t end = get_time();
+		if (args->log)
+			log_print_time(args->obj, args->queue_num, end - start);
+		time_stay_at_queue[args->queue_num + 1].push_back(-end);
+		return NULL;
+	}
+	
+	void* Conveyor::do_parallel_work2(void *_args)
+	{
+		par_args *args = (par_args*) _args;
+		size_t start = get_time();
+		args->obj.sum(args->obj.size / 3, 2 * args->obj.size / 3);
+		
+		args->mutex.lock();
+		args->queue.push(args->obj);
+		args->mutex.unlock();
+		
+		size_t end = get_time();
+		if (args->log)
+			log_print_time(args->obj, args->queue_num, end - start);
+		time_stay_at_queue[args->queue_num + 1].push_back(-end);
+		return NULL;
+	}
+	
+	void* Conveyor::do_parallel_work3(void *_args)
+	{
+		par_args *args = (par_args*) _args;
+		size_t start = get_time();
+		args->obj.sum(2 * args->obj.size / 3, args->obj.size);
+		
+		args->mutex.lock();
+		args->queue.push(args->obj);
+		args->mutex.unlock();
+		
+		size_t end = get_time();
+		if (args->log)
+			log_print_time(args->obj, args->queue_num, end - start);
+		time_stay_at_queue[args->queue_num + 1].push_back(-end);
+		return NULL;
+	}
+	
+	void Conveyor::execute_parallel()
+	{
+		std::queue<MatrixSet> obj_generator;
+		
+		for (size_t i = 0; i < obj_count; i++)
+			obj_generator.push(MatrixSet(i + 1, 1038, -200, 200));
+		
+		std::vector<MatrixSet> obj_pool;
+		
+		std::vector<std::thread> threads(3);
+		std::vector<std::queue<MatrixSet>> queues(3);
+		std::vector<std::mutex> mutexes(4);
+		size_t prev_time = get_time() - delay_time;
+		
+		while (obj_pool.size() != obj_count)
+		{
+			size_t cur_time = get_time();
+			
+			if (!obj_generator.empty() && prev_time + delay_time < cur_time)
+			{
+				MatrixSet obj = obj_generator.front();
+				obj_generator.pop();
+				queues[0].push(obj);
+			
+				prev_time = get_time();
+				time_stay_at_queue[0].push_back(-prev_time);
+			}
+		
+			for (unsigned i = 0; i < queue_count; i++)
+			{
+				if (threads[i].joinable())
+				threads[i].join();
+			
+				if (!queues[i].empty() && !threads[i].joinable())
+				{
+					mutexes[i].lock();
+					MatrixSet obj = queues[i].front();
+					queues[i].pop();
+					mutexes[i].unlock();
+			
+					size_t start = get_time();
+					size_t last = time_stay_at_queue[i].size() - 1;
+					time_stay_at_queue[i][last] += start;
+					
+					par_args args1 = {
+						obj, std::ref(queues[i + 1]), i,
+						std::ref(mutexes[i + 1]), false
+					};
+			
+					par_args args2 = {
+						obj, std::ref(queues[i + 1]), i,
+						std::ref(mutexes[i + 1]), false
+					};
+			
+					if (i == 0)
+						threads[i] = std::thread(&Conveyor::do_parallel_work1,
+							this, (void *) &args1);
+					else if (i == 1)
+						threads[i] = std::thread(&Conveyor::do_parallel_work2,
+							this, (void *) &args1);
+					else if (i == queue_count - 1)
+						threads[i] = std::thread(&Conveyor::do_parallel_work3,
+							this, (void *) &args2);
+				}
+			}
+		}
+		
+		for (size_t i = 0; i < queue_count; i++)
+		{
+			if (threads[i].joinable())
+				threads[i].join();
+		}
+	}
+	\end{lstlisting}
+	
+	\section{Вывод}
+	\hspace{0.5cm}В данном разделе была рассмотрена конкретные реализации линейной и конвейерной обработки сложения матриц, необходимые для сравнительного анализа данных реализаций.
+			
+	\chapter{Экспериментальный раздел}
+	\hspace{0.5cm}В данном разделе приведены результаты работы двух различных реализаций обработки сложения матриц.
+	
+	\section{Сравнительный анализ}
+	\hspace{0.5cm}Все замеры проводились на процессоре 2.3 GHz Intel Core i5 с памятью 12 ГБ. В таблице \ref{fig:table} и на графике \ref{fig:graph}
+	представлены результаты измерения времени работы линейной и конвейерной реализации обработки сложения матриц.
+
+	
+
+	\begin{table}[ht!]
+		\label{fig:table}
+		\caption{Время работы различных методов обработки в миллисекундах}
+		\begin{center}
+			\pgfplotstabletypeset[
+			col sep=semicolon,
+			string type,
+			columns/Obj/.style={column name=Количество объектов, column type={|c}},
+			columns/Lin/.style={column name=Линейная обработка, column type={|c}},
+			columns/Conv/.style={column name=Конвейерная обработка, column type={|c|}},
+			every head row/.style={before row=\hline,after row=\hline},
+			every last row/.style={after row=\hline},
+			]{time.csv}
+		\end{center}
+	\end{table}
+
+	\begin{figure}[ht!]
+		\begin{tikzpicture}
+		\begin{axis}
+		[%title = График времени работы различных методов обработки в миллисекундах,
+		table/col sep = semicolon,
+		xlabel={Количество объектов},
+		ylabel={Время в мс},
+		legend pos=outer north east,
+		ymajorgrids=true,
+		grid style=dashed]
+		\addplot[color=red, mark=*] table[x={Obj}, y={Lin}] {time.csv};
+		\addplot[color=blue, mark=*] table[x={Obj}, y={Conv}] {time.csv};
+		\legend{Линейная обработка, Конвейерная обработка}
+		\end{axis}
+		\end{tikzpicture}
+		\label{fig:graph}
+		\caption{График времени работы различных методов обработки в миллисекундаха}
+	\end{figure}
+
+	Сравнение времени работы приведены для сложения квадратных матриц размера 1038х1038. Такая размерность матрицы была выбрана, из-за того, что реализация линейной и конвейерной обработки основывается на трех очередях, и чтобы загрузить каждую очередь одинаково, нужно выбрать размерность матрицы кратную трем. В нашем случае каждому этапу обработки достается сложение 346 элементов.
+	
+	
+	\section{Вывод}
+	\hspace{0.5cm}По данным эксперимента можно сделать вывод о том, что линейная обработка оказалась менеее эффективной, чем конвейерная. На небольшом количестве объектов эффективность конвейерной обработки не заметна. Это связано с тем, что значительную часть времени работы программы конвейерной обработки занимает инициализация потоков. Но на больших объемах входных данных(1000 обрабатываемых объектов) линейная обработка работает в 1.37 раза дольше. 
+
+	\chapter*{Заключение}
+	\addcontentsline{toc}{chapter}{Заключение}
+	\hspace{0.5cm}В ходе выполнения данной лабораторной работы были изучены принципы конвейерной обработки. Было проведено исследование работы алгоритма при различных параметрах, показавшее, что конвейерная обработка работает значительно быстрее, чем линейная обработка (в 1.37 раза быстрее
+	при количестве объектов, равном 1000).
+	
+	\newpage
+	
+	\begin{thebibliography}{}
+	\bibitem{devcpp} ISO/IEC JTC1 SC22 WG21 N 3690 «Programming Languages — C++»
+	[Электронный ресурс]. https://devdocs.io/cpp/
+	\bibitem{CPP} https://cppreference.com/ [Электронный ресурс]
+	\end{thebibliography}
+	\addcontentsline{toc}{chapter}{Литература}
+
+\end{document}
