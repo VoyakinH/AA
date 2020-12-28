@@ -1,0 +1,50 @@
+interpolation
+point
+case of two
+tab2[i][2]
+p:[[7,2],[8,2],[1,5],[3,2],[6,7]]
+list
+load(interpol); 
+draw2d
+[]
+ defaults: ['x],
+program
+error
+for i in select do
+kill
+;;
+start
+5
+exam
+stderr
+format
+.mac
+~*~  PRINTF  ~*~
+makelist
+aj
++
+if not
+not correct
+ explicit(f(x),x,0,9), 
+ Linear interpolation. The argument must be either:
+prod
+polynomial
+block
+%pi
+matrix
+Argument to
+interpol_check_input(data,funame):=
+@@@
+INTRODUCTION
+------------------------
+a)
+thru
+r > n-1 or r < 0
+stringproc.texi 
+(in-package :maxima)
+lambda
+text
+stream
+nil
+when
+newline
